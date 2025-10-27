@@ -24,7 +24,8 @@ class _PoliPageState extends State<PoliPage> {
     return Scaffold(
       drawer: const Sidebar(),
       appBar: AppBar(
-        title: const Text("Data Poli"),
+        title: const Text("Data Poli", style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blueAccent,
         actions: [
           GestureDetector(
             child: const Icon(Icons.add),

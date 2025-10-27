@@ -28,7 +28,10 @@ class PasienPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Data Pasien")),
+      appBar: AppBar(
+        title: const Text("Data Pasien", style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blueAccent,
+      ),
       body: ListView.builder(
         itemCount: pasienList.length,
         itemBuilder: (context, index) {

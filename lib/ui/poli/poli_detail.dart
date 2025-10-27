@@ -17,7 +17,10 @@ class _PoliDetailState extends State<PoliDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Detail Poli")),
+      appBar: AppBar(
+        title: const Text("Detail Poli", style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blueAccent,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

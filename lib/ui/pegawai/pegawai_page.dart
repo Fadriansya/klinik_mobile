@@ -30,7 +30,13 @@ class PegawaiPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Data Pegawai")),
+      appBar: AppBar(
+        title: const Text(
+          "Data Pegawai",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.blueAccent,
+      ),
       body: ListView.builder(
         itemCount: pegawaiList.length,
         itemBuilder: (context, index) {
