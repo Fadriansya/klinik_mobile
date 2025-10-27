@@ -1,9 +1,10 @@
+// lib/ui/poli_page.dart
 import 'package:flutter/material.dart';
-import '/widget/sidebar.dart';
 import '/model/poli.dart';
-// import 'poli_detail.dart';
+import '/service/poli_service.dart';
 import 'poli_item.dart';
 import 'poli_form.dart';
+import '/widget/sidebar.dart';
 
 class PoliPage extends StatefulWidget {
   const PoliPage({super.key});
@@ -13,32 +14,47 @@ class PoliPage extends StatefulWidget {
 }
 
 class _PoliPageState extends State<PoliPage> {
+  Stream<List<Poli>> getList() async* {
+    List<Poli> data = await PoliService().listData();
+    yield data;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Sidebar(),
+      drawer: const Sidebar(),
       appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: const Text("Data Poli", style: TextStyle(color: Colors.white)),
+        title: const Text("Data Poli"),
         actions: [
           GestureDetector(
             child: const Icon(Icons.add),
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              // buka form tambah, lalu refresh page setelah kembali
+              await Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PoliForm()),
+                MaterialPageRoute(builder: (context) => const PoliForm()),
               );
+              setState(() {});
             },
           ),
         ],
       ),
-      body: ListView(
-        children: [
-          PoliItem(poli: Poli(namaPoli: "Poli Anak")),
-          PoliItem(poli: Poli(namaPoli: "Poli Kandungan")),
-          PoliItem(poli: Poli(namaPoli: "Poli Gigi")),
-          PoliItem(poli: Poli(namaPoli: "Poli THT")),
-        ],
+      body: StreamBuilder<List<Poli>>(
+        stream: getList(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError)
+            return Center(child: Text(snapshot.error.toString()));
+          if (!snapshot.hasData)
+            return const Center(child: CircularProgressIndicator());
+          final list = snapshot.data!;
+          if (list.isEmpty) return const Center(child: Text('Data Kosong'));
+          return ListView.builder(
+            itemCount: list.length,
+            itemBuilder: (context, index) {
+              return PoliItem(poli: list[index]);
+            },
+          );
+        },
       ),
     );
   }

@@ -1,24 +1,56 @@
+// lib/ui/poli_update_form.dart
 import 'package:flutter/material.dart';
 import '/model/poli.dart';
-import '/ui/poli/poli_detail.dart';
+import '/service/poli_service.dart';
+import 'poli_detail.dart';
 
 class PoliUpdateForm extends StatefulWidget {
   final Poli poli;
+  const PoliUpdateForm({super.key, required this.poli});
 
-  const PoliUpdateForm({Key? key, required this.poli}) : super(key: key);
-  _PoliUpdateFormState createState() => _PoliUpdateFormState();
+  @override
+  State<PoliUpdateForm> createState() => _PoliUpdateFormState();
 }
 
 class _PoliUpdateFormState extends State<PoliUpdateForm> {
-  final _formKey = GlobalKey<FormState>();
   final _namaPoliCtrl = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    setState(() {
+    // ambil data dari API (opsional) atau pakai data yang dikirim
+    _getData();
+  }
+
+  Future<void> _getData() async {
+    if (widget.poli.id != null) {
+      Poli data = await PoliService().getById(widget.poli.id!);
+      setState(() {
+        _namaPoliCtrl.text = data.namaPoli;
+      });
+    } else {
       _namaPoliCtrl.text = widget.poli.namaPoli;
-    });
+    }
+  }
+
+  _tombolSimpan() {
+    return ElevatedButton(
+      onPressed: () async {
+        final poli = Poli(namaPoli: _namaPoliCtrl.text, id: widget.poli.id);
+        if (widget.poli.id != null) {
+          await PoliService().ubah(poli, widget.poli.id!);
+        }
+        // kembalikan updated object ke halaman detail
+        Navigator.pop(context, poli);
+      },
+      child: const Text("Simpan Perubahan"),
+    );
+  }
+
+  @override
+  void dispose() {
+    _namaPoliCtrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -26,34 +58,18 @@ class _PoliUpdateFormState extends State<PoliUpdateForm> {
     return Scaffold(
       appBar: AppBar(title: const Text("Ubah Poli")),
       body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [_fieldNamaPoli(), SizedBox(height: 20), _tombolSimpan()],
-          ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(
+              controller: _namaPoliCtrl,
+              decoration: const InputDecoration(labelText: "Nama Poli"),
+            ),
+            const SizedBox(height: 20),
+            _tombolSimpan(),
+          ],
         ),
       ),
-    );
-  }
-
-  _fieldNamaPoli() {
-    return TextField(
-      decoration: const InputDecoration(labelText: "Nama Poli"),
-      controller: _namaPoliCtrl,
-    );
-  }
-
-  _tombolSimpan() {
-    return ElevatedButton(
-      onPressed: () {
-        Poli poli = new Poli(namaPoli: _namaPoliCtrl.text);
-        Navigator.pop(context);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => PoliDetail(poli: poli)),
-        );
-      },
-      child: const Text("Simpan Perubahan"),
     );
   }
 }
