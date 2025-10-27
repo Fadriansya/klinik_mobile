@@ -1,4 +1,3 @@
-// lib/ui/poli_item.dart
 import 'package:flutter/material.dart';
 import '/model/poli.dart';
 import 'poli_detail.dart';
